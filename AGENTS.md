@@ -13,6 +13,12 @@ Este repositório utiliza **Harness & Loop Engineering** para desenvolvimento au
 5. **Persistência Dual**:
    - Markdown (`.loop/`, `MEMORY.md`) para leitura imediata humana e do Coordenador.
    - SQLite (`.agents/memory.sqlite`) para histórico cronológico, rastreabilidade, kanban e métricas.
+6. **Blindagem de Banco e Anti-Degradação Silenciosa**:
+   - Migrações retrocompatíveis e idempotentes para bancos legados em disco.
+   - Proibição estrita de swallow de exceções (`try...except Exception: pass`) em UI e repositórios.
+7. **Padrão de Customização Desacoplada (Overlay `*.custom.md`)**:
+   - Regras customizadas de equipes ou projetos vivem em arquivos irmãos `.custom.md`.
+   - Arquivos core podem ser atualizados via `/loop-engineering-init update` sem sobrescrever personalizações locais.
 
 ---
 
@@ -20,19 +26,26 @@ Este repositório utiliza **Harness & Loop Engineering** para desenvolvimento au
 
 ```text
 /
-├── AGENTS.md                  # Este manifesto: regras globais e ciclo
+├── AGENTS.md                  # Este manifesto: regras globais e ciclo (Core)
+├── AGENTS.custom.md           # [Opcional] Regras mestres específicas do projeto
 │
 ├── .agents/                   # Governança e inteligência dos agentes
-│   ├── SOUL.md                # Personalidade, limites éticos e comportamento
+│   ├── SOUL.md                # Personalidade, limites éticos e comportamento (Core)
+│   ├── SOUL.custom.md         # [Opcional] Limites e ajustes comportamentais locais
 │   ├── MEMORY.md              # Memória rápida: lições aprendidas e convenções arquiteturais
 │   ├── memory.sqlite          # Banco relacional com histórico de demandas, tarefas e evals
 │   ├── schema.sql             # Definição das tabelas do banco SQLite
 │   └── roles/                 # Prompts de papéis especializados para subagentes
-│       ├── scope_analyst.md   # Refinamento de requisitos e não-objetivos
-│       ├── architect.md       # Desenho de contratos, estruturas e dependências
-│       ├── planner.md         # Criação de testes primeiro (TDD) e quebra de tarefas
-│       ├── builder.md         # Implementação técnica e correção de falhas
-│       └── tester_judge.md    # Validação com contexto zerado e emissão de veredito
+│       ├── scope_analyst.md   # [Core] Refinamento de requisitos e não-objetivos
+│       ├── scope_analyst.custom.md # [Opcional]
+│       ├── architect.md       # [Core] Desenho de contratos, estruturas e migrações
+│       ├── architect.custom.md     # [Opcional]
+│       ├── planner.md         # [Core] Criação de testes primeiro (TDD) e quebra
+│       ├── planner.custom.md       # [Opcional]
+│       ├── builder.md         # [Core] Implementação sem falhas silenciosas
+│       ├── builder.custom.md       # [Opcional]
+│       ├── tester_judge.md    # [Core] Validação com auditoria de banco e integridade
+│       └── tester_judge.custom.md  # [Opcional]
 │
 └── .loop/                     # Operação do ciclo de desenvolvimento
     ├── SCHEDULE.md            # Gatilhos de acionamento, rotina de despertar e limites
@@ -43,19 +56,23 @@ Este repositório utiliza **Harness & Loop Engineering** para desenvolvimento au
 
 ---
 
-## 3. O Ciclo do Loop
+## 3. O Ciclo do Loop e Composição de Prompts
+
+Quando o Coordenador invoca um subagente:
+- Carrega o prompt core de `.agents/roles/<role>.md`.
+- Se existir `.agents/roles/<role>.custom.md`, concatena suas diretrizes ao final.
 
 ```text
 [Usuário] ──> [Coordenador]
                    │
-                   ├──> 1. Análise: subagent(roles/scope_analyst.md) ──> .loop/specs/XXX.md
-                   ├──> 2. Arquitetura: subagent(roles/architect.md)
-                   ├──> 3. TDD & Plano: subagent(roles/planner.md) ───> .loop/tasks/current_run.md + testes
+                   ├──> 1. Análise: subagent(roles/scope_analyst.md + custom) ──> .loop/specs/XXX.md
+                   ├──> 2. Arquitetura: subagent(roles/architect.md + custom)
+                   ├──> 3. TDD & Plano: subagent(roles/planner.md + custom) ───> .loop/tasks/current_run.md + testes
                    │
                    └──> [LOOP DE EXECUÇÃO]:
                             │
-                            ├──> 4. Builder: subagent(roles/builder.md) ──> Código
-                            ├──> 5. Judge: subagent(roles/tester_judge.md) ──> .loop/evals/last_eval.md
+                            ├──> 4. Builder: subagent(roles/builder.md + custom) ──> Código
+                            ├──> 5. Judge: subagent(roles/tester_judge.md + custom) ──> .loop/evals/last_eval.md
                             │        │
                             │        ├── [FALHA] ──> Repassa pendências para Builder (Max N rodadas)
                             │        └── [PASSOU] ──> Atualiza MEMORY.md + memory.sqlite
@@ -65,12 +82,11 @@ Este repositório utiliza **Harness & Loop Engineering** para desenvolvimento au
 
 ---
 
-## 4. Inicialização em Novo Workspace
+## 4. Inicialização e Atualização do Workspace
 
-Para preparar um novo workspace que acabou de clonar esta base:
-1. Inicializar banco SQLite:
+1. **Inicializar banco SQLite**:
    ```bash
-   sqlite3 .agents/memory.sqlite < .agents/schema.sql
+   python3 -c "import sqlite3; conn = sqlite3.connect('.agents/memory.sqlite'); f = open('.agents/schema.sql', 'r'); conn.executescript(f.read()); conn.close(); print('DB inicializado')"
    ```
-2. Ler `.agents/SOUL.md` e `.agents/MEMORY.md`.
-3. Ler `.loop/SCHEDULE.md` para entender como acordar o ciclo para a demanda desejada.
+2. **Atualização de Guard-Rails**:
+   - Para atualizar a orquestração para a versão mais recente sem perder personalizações, invoque a skill `/loop-engineering-init update`.

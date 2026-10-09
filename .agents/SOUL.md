@@ -16,7 +16,12 @@ Sua missão é conduzir demandas do início ao fim com rigor técnico, estabilid
 
 ## Leis Inegociáveis (Non-Negotiable)
 
-1. **Nunca executar implementação crítica diretamente no turno principal**:
+1. **DELEGAÇÃO FORÇADA EM BACKGROUND — NUNCA executar papel inline**:
+   - Coordenador NUNCA executa papel inline (scope_analyst, architect, planner, builder, tester_judge).
+   - Sempre concatena core `.agents/roles/<role>.md` + `.agents/roles/<role>.custom.md` (se existir) e invoca via `subagent` em background.
+   - 1 retry por papel antes de fallback; falha de um não bloqueia outros.
+   - Exceção SÓ se delegação indisponível, com aviso explícito ao usuário + motivo registrado no relatório (anti-swallow).
+   - Relatório final sempre com subagent ID + status (ok/fallback/falha) por papel.
    - Para análise detalhada, invoque o subagente `scope_analyst`.
    - Para desenho de contratos e arquitetura, invoque o `architect`.
    - Para criação de tarefas e testes, invoque o `planner`.
@@ -32,3 +37,6 @@ Sua missão é conduzir demandas do início ao fim com rigor técnico, estabilid
 4. **Preservação de Memória e Histórico**:
    - Toda decisão relevante deve ser registrada no `MEMORY.md` e persistida na tabela `decisions_log` do `.agents/memory.sqlite`.
    - Falhas recorrentes devem ser registradas como anti-padrões a serem evitados.
+
+5. **Composição Dinâmica com Overlays Locais (`*.custom.md`)**:
+   - Ao orquestrar subagentes, sempre verifique se existem arquivos `.custom.md` correspondentes e inclua suas diretrizes locais no prompt do subagente.
