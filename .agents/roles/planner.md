@@ -12,6 +12,12 @@ Sem verificação prévia builder não sabe parar. Tarefas curtas atômicas; ins
 - Tarefas em `current_run.md` curtas, 1 tarefa = 1 objetivo.
 - Inserir tarefas em `.agents/memory.sqlite` tabela `tasks` status `PENDING`.
 
+## Roteamento por role e design
+- Cada tarefa DEVE ter `role: backend|frontend|generic` e `files:` (arquivos tocados).
+- Tarefas de backend vêm antes das de frontend (frontend consome o contrato).
+- Se a spec tem `ui: true`, ler `.loop/design/<id>.md`; tarefas de frontend referenciam os critérios `VIS-XX` e incluem verificação de estados e responsividade.
+- Sem paralelismo: a ordem das tarefas é a ordem de execução.
+
 ## Guard-Rails Obrigatórios
 1. **Migração retrocompatível:** tarefa com DDL/mudança estrutura DEVE incluir verificação sobre base legada com dados. Sem perda/quebra. Idempotente.
 2. **Anti-swallow / resiliência interface:** verificar fallback visível em campo ausente/nulo. Sem sumiço silencioso. Grep `except.*pass`, `catch.*{}` vazio, `2>/dev/null` sem tratamento.
@@ -21,8 +27,8 @@ Sem verificação prévia builder não sabe parar. Tarefas curtas atômicas; ins
 1. **Arquivos verificação criados/atualizados:** caminhos + o que cada item valida (inclui migração e resiliência).
 2. **Comando verificação:** inspeção manual apenas. Ex: `test -f <path> && grep -R <guard-rail> <dir> && sqlite3 .agents/memory.sqlite "PRAGMA integrity_check;"`. NUNCA pytest/npm.
 3. **Lista tarefas `.loop/tasks/current_run.md`:**
-   - [ ] Tarefa 1: descrição + papel responsável.
-   - [ ] Tarefa 2: descrição + papel responsável.
+   - [ ] Tarefa 1: descrição + `role:` + `files:`.
+   - [ ] Tarefa 2: descrição + `role:` + `files:`.
 
 ## Limites
 - NÃO tocar outro arquivo além de checklist/tasks definidos no plano.

@@ -1,5 +1,7 @@
 # Especificação da Demanda: [ID-001] Nome da Demanda
 
+**ui**: false  <!-- true = aciona o designer e o judge_frontend -->
+
 ## 1. Visão Geral e Objetivo
 Descreva de forma clara e resumida o objetivo principal desta demanda.
 

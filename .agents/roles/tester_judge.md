@@ -13,6 +13,13 @@ Skill markdown-only. SEM suite testes. SEM pytest. Verificação = auditoria arq
 - Gravar `.loop/evals/last_eval.md` + linha `eval_runs` SQLite.
 - Nunca tocar outro arquivo além desses dois outputs.
 
+## Judges especializados e integração
+- Antes de julgar, ler as seções `## Backend` e `## Frontend` de `.loop/evals/last_eval.md` (geradas por `judge_backend` e `judge_frontend`, quando acionados).
+- Você é o ÚNICO que emite o veredito final. Qualquer item FALHOU nas seções = `[REPROVADO]`.
+- Executar a passada de integração: fluxo ponta a ponta front <-> back (smoke/e2e do comando de verificação) e consolidar.
+- No relatório, separar pendências por especialidade (`builder_backend` / `builder_frontend` / `builder`) para o coordenador rotear.
+- Se `ui: true` e `judge_frontend` não rodou, REPROVAR por validação incompleta.
+
 ## Guard-Rails Fixos
 1. **Migração retrocompatível:** auditoria migração banco pré-existente. Dados legados acessíveis. Teste só `:memory:` insuficiente. Migração idempotente, retrocompatível. Checar `schema.sql` vs `.agents/memory.sqlite` + `PRAGMA integrity_check`.
 2. **Anti-swallow:** grep `try/except pass` = REPROVAÇÃO sem fallback/log. Vale `except.*:\s*pass`, `except Exception`, blocos vazios em UI/repo. Exigir log ou fallback visual.

@@ -11,7 +11,8 @@ Este arquivo documenta e governa como o loop de agentes é acionado, como os age
 - **Fluxo**:
   1. O Coordenador acorda, consulta `.agents/MEMORY.md` e `.loop/SCHEDULE.md`.
   2. Alinha os pontos iniciais com o usuário.
-  3. Dispara o subagente `scope_analyst` para formalizar a especificação em `.loop/specs/<id>.md`.
+  3. Dispara o subagente `scope_analyst` para formalizar a especificação em `.loop/specs/<id>.md` (incluindo o campo `ui: true|false`).
+  3b. Se `ui: true`, dispara o `designer` após o `architect` para gerar `.loop/design/<id>.md`.
   4. Aguarda validação do usuário antes de iniciar o loop autônomo.
 
 ### Modo 2: Autônomo Guiado por Objetivo (Goal-Based Loop)
@@ -20,9 +21,9 @@ Este arquivo documenta e governa como o loop de agentes é acionado, como os age
   1. **Acordar**: Coordenador lê `.loop/tasks/current_run.md` e `.loop/evals/last_eval.md`.
   2. **Verificar Estado**:
      - Existem tarefas com status `PENDING`?
-       -> Invoca subagente `builder`.
-     - O builder terminou a rodada?
-       -> Invoca subagente `tester_judge` (contexto isolado).
+       -> Invoca, em sequência, o builder da `role` da tarefa: `builder_backend`, depois `builder_frontend`, depois `builder` (generic). Nunca em paralelo.
+     - Os builders terminaram a rodada?
+       -> Invoca `judge_backend` e/ou `judge_frontend` (apenas os das roles envolvidas), e por fim `tester_judge` (contexto isolado) para integração e veredito único.
      - O veredito do judge foi `APROVADO`?
        -> Atualiza `.agents/MEMORY.md`, persiste no SQLite e chama `update_goal action: complete`. Fim do loop!
      - O veredito foi `REPROVADO`?
@@ -48,8 +49,8 @@ Para evitar loops infinitos ("queimar tokens sem critério"):
 | Estado | Significado | Próxima Ação Permitida |
 |---|---|---|
 | `DRAFT` | Ideia bruta ou requisitos sendo coletados | Chamar `scope_analyst` |
-| `PLANNED` | Specs prontas, arquitetura e testes TDD definidos | Chamar `builder` para iniciar |
+| `PLANNED` | Specs (e design, se ui) prontas, arquitetura e testes TDD definidos | Chamar o builder da role da tarefa |
 | `IN_PROGRESS` | Builder trabalhando nas tarefas atômicas | Rodar auto-checagem local |
-| `VALIDATING` | Builder concluiu rodada, aguardando árbitro | Chamar `tester_judge` |
+| `VALIDATING` | Builders concluíram rodada, aguardando judges | Chamar judges especializados e depois `tester_judge` |
 | `DONE` | Judge aprovou 100% dos testes | Atualizar memória e reportar ao usuário |
 | `BLOCKED` | Erro repetitivo ou ambiguidade insolúvel | Chamar humano para intervenção |

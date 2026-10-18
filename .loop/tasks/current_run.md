@@ -17,6 +17,7 @@
 ## Tarefas Atômicas da Rodada
 
 - [ ] `TASK-01`: [Papel: planner] Definir testes automatizados que cobrem os critérios de aceite.
-- [ ] `TASK-02`: [Papel: builder] Implementar estrutura base conforme especificação.
-- [ ] `TASK-03`: [Papel: builder] Fazer testes passarem na auto-checagem local.
-- [ ] `TASK-04`: [Papel: tester_judge] Execução cega da suíte de testes e emissão do veredito.
+- [ ] `TASK-02`: [role: backend] [files: ...] Implementar API/dados conforme especificação.
+- [ ] `TASK-03`: [role: frontend] [files: ...] Implementar UI conforme `.loop/design/<id>.md` (somente se ui: true).
+- [ ] `TASK-03b`: [role: generic] [files: ...] Scripts/infra/CLI, se houver.
+- [ ] `TASK-04`: [Papel: judge_backend/judge_frontend/tester_judge] Execução cega da suíte de testes e emissão do veredito.

@@ -42,14 +42,25 @@ Este repositório utiliza **Harness & Loop Engineering** para desenvolvimento au
 │       ├── architect.custom.md     # [Opcional]
 │       ├── planner.md         # [Core] Criação de testes primeiro (TDD) e quebra
 │       ├── planner.custom.md       # [Opcional]
-│       ├── builder.md         # [Core] Implementação sem falhas silenciosas
+│       ├── designer.md        # [Core] Direção visual e spec de UI (só se ui: true)
+│       ├── designer.custom.md      # [Opcional]
+│       ├── builder.md         # [Core] Fallback genérico (scripts, infra, CLI)
 │       ├── builder.custom.md       # [Opcional]
-│       ├── tester_judge.md    # [Core] Validação com auditoria de banco e integridade
+│       ├── builder_backend.md # [Core] APIs, banco, migrações, regras de negócio
+│       ├── builder_backend.custom.md   # [Opcional]
+│       ├── builder_frontend.md # [Core] UI/UX conforme o design
+│       ├── builder_frontend.custom.md  # [Opcional]
+│       ├── judge_backend.md   # [Core] Relatório especializado de backend
+│       ├── judge_backend.custom.md     # [Opcional]
+│       ├── judge_frontend.md  # [Core] Relatório especializado de UI
+│       ├── judge_frontend.custom.md    # [Opcional]
+│       ├── tester_judge.md    # [Core] Juiz final: integração e veredito único
 │       └── tester_judge.custom.md  # [Opcional]
 │
 └── .loop/                     # Operação do ciclo de desenvolvimento
     ├── SCHEDULE.md            # Gatilhos de acionamento, rotina de despertar e limites
     ├── specs/                 # Documentos de especificação formal das demandas
+    ├── design/                # Especificações visuais (<id>.md) geradas pelo designer
     ├── tasks/                 # Fila de tarefas atômicas (current_run.md)
     └── evals/                 # Vereditos e relatórios de execução dos testes
 ```
@@ -67,18 +78,31 @@ Quando o Coordenador invoca um subagente:
                    │
                    ├──> 1. Análise: subagent(roles/scope_analyst.md + custom) ──> .loop/specs/XXX.md
                    ├──> 2. Arquitetura: subagent(roles/architect.md + custom)
+                   ├──> 2b. Design (só se spec ui: true): subagent(roles/designer.md + custom) ──> .loop/design/XXX.md
                    ├──> 3. TDD & Plano: subagent(roles/planner.md + custom) ───> .loop/tasks/current_run.md + testes
                    │
-                   └──> [LOOP DE EXECUÇÃO]:
+                   └──> [LOOP DE EXECUÇÃO] (builders SEMPRE em sequência, nunca em paralelo):
                             │
-                            ├──> 4. Builder: subagent(roles/builder.md + custom) ──> Código
-                            ├──> 5. Judge: subagent(roles/tester_judge.md + custom) ──> .loop/evals/last_eval.md
+                            ├──> 4a. builder_backend (tarefas role: backend) ──> Código + contrato
+                            ├──> 4b. builder_frontend (tarefas role: frontend) ──> UI conforme design
+                            ├──> 4c. builder (tarefas role: generic) ──> Scripts/infra/CLI
+                            ├──> 5a. judge_backend / 5b. judge_frontend (só os envolvidos) ──> seções do last_eval.md
+                            ├──> 5c. tester_judge: integração ponta a ponta + VEREDITO ÚNICO ──> .loop/evals/last_eval.md
                             │        │
                             │        ├── [FALHA] ──> Repassa pendências para Builder (Max N rodadas)
                             │        └── [PASSOU] ──> Atualiza MEMORY.md + memory.sqlite
                             │
                             └──> Reporta entrega ao Usuário
 ```
+
+---
+
+### Roteamento por `role`
+- O `planner` marca cada tarefa em `current_run.md` com `role: backend|frontend|generic`.
+- Ordem padrão: backend -> frontend -> generic. Pendências voltam ao builder da mesma especialidade.
+- Os judges especializados apenas reportam; somente o `tester_judge` emite APROVADO/REPROVADO.
+- Sem paralelismo de subagentes: um builder por vez evita conflitos de escrita e de SQLite.
+- Se a spec não tiver `ui: true`, pular `designer` e `judge_frontend`.
 
 ---
 
