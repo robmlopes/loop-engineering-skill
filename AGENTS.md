@@ -1,3 +1,4 @@
+<!-- LOOP-ENGINEERING:BEGIN (gerenciado por /loop-engineering-init; não edite dentro do bloco) -->
 # Manifesto Mestre de Governança e Orquestração (DSH)
 
 Este repositório utiliza **Harness & Loop Engineering** para desenvolvimento autônomo com agentes de IA.
@@ -114,3 +115,4 @@ Quando o Coordenador invoca um subagente:
    ```
 2. **Atualização de Guard-Rails**:
    - Para atualizar a orquestração para a versão mais recente sem perder personalizações, invoque a skill `/loop-engineering-init update`.
+<!-- LOOP-ENGINEERING:END -->
