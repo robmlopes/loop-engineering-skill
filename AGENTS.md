@@ -1,4 +1,4 @@
-<!-- LOOP-ENGINEERING:BEGIN (gerenciado por /loop-engineering-init; não edite dentro do bloco) -->
+<!-- LOOP-ENGINEERING:BEGIN (gerenciado por /loop-engineering; não edite dentro do bloco) -->
 # Manifesto Mestre de Governança e Orquestração (DSH)
 
 Este repositório utiliza **Harness & Loop Engineering** para desenvolvimento autônomo com agentes de IA.
@@ -19,7 +19,7 @@ Este repositório utiliza **Harness & Loop Engineering** para desenvolvimento au
    - Proibição estrita de swallow de exceções (`try...except Exception: pass`) em UI e repositórios.
 7. **Padrão de Customização Desacoplada (Overlay `*.custom.md`)**:
    - Regras customizadas de equipes ou projetos vivem em arquivos irmãos `.custom.md`.
-   - Arquivos core podem ser atualizados via `/loop-engineering-init update` sem sobrescrever personalizações locais.
+   - Arquivos core podem ser atualizados via `/loop-engineering update` sem sobrescrever personalizações locais.
 
 ---
 
@@ -114,5 +114,5 @@ Quando o Coordenador invoca um subagente:
    python3 -c "import sqlite3; conn = sqlite3.connect('.agents/memory.sqlite'); f = open('.agents/schema.sql', 'r'); conn.executescript(f.read()); conn.close(); print('DB inicializado')"
    ```
 2. **Atualização de Guard-Rails**:
-   - Para atualizar a orquestração para a versão mais recente sem perder personalizações, invoque a skill `/loop-engineering-init update`.
+   - Para atualizar a orquestração para a versão mais recente sem perder personalizações, invoque a skill `/loop-engineering update`.
 <!-- LOOP-ENGINEERING:END -->

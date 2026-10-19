@@ -15,7 +15,7 @@ Este arquivo armazena convenções estabelecidas, decisões técnicas permanente
 ## 2. Decisões Arquiteturais Registradas
 - `[DEC-001]`: Arquitetura do Workspace baseada em Harness & Loop Engineering nativo do DSH com persistência dual (Markdown para legibilidade + SQLite para rastreabilidade/kanban).
 - `[DEC-002]`: Verificação cega independente (Judge) com subagente de contexto isolado para mitigar erros compostos de execução.
-- `[DEC-003]`: Padrão Overlay para Customização (`*.custom.md`) para permitir atualizações automáticas de governança via `/loop-engineering-init update` sem sobrescrever regras específicas locais.
+- `[DEC-003]`: Padrão Overlay para Customização (`*.custom.md`) para permitir atualizações automáticas de governança via `/loop-engineering update` sem sobrescrever regras específicas locais.
 - `[DEC-004]`: Blindagem Obrigatória de Migração de Dados: repositórios e DDLs devem aplicar migrações retrocompatíveis e idempotentes sobre bases existentes em disco.
 
 ---

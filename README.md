@@ -72,16 +72,16 @@ Escolha o destino conforme o agente:
 
 ```bash
 # Claude Code
-mkdir -p ~/.claude/skills && cp -r skill/loop-engineering-init ~/.claude/skills/
+mkdir -p ~/.claude/skills && cp -r skill/loop-engineering ~/.claude/skills/
 
 # DSH / agentes que usam ~/.agents
-mkdir -p ~/.agents/skills && cp -r skill/loop-engineering-init ~/.agents/skills/
+mkdir -p ~/.agents/skills && cp -r skill/loop-engineering ~/.agents/skills/
 ```
 
 Confirme que o arquivo existe:
 
 ```bash
-ls ~/.claude/skills/loop-engineering-init/SKILL.md
+ls ~/.claude/skills/loop-engineering/SKILL.md
 ```
 
 Reinicie a sessão do agente para ele carregar a skill.
@@ -93,7 +93,7 @@ Reinicie a sessão do agente para ele carregar a skill.
 Abra o agente na raiz do projeto e rode:
 
 ```text
-/loop-engineering-init
+/loop-engineering init
 ```
 
 (ou peça: "inicialize o loop engineering").
@@ -147,12 +147,12 @@ Regras específicas do projeto ficam em arquivos irmãos dos papéis, por exempl
 ## 7. Atualização
 
 ```text
-/loop-engineering-init update
+/loop-engineering update
 ```
 
 Atualiza os papéis, o `SOUL.md`, o `SCHEDULE.md` e o bloco `LOOP-ENGINEERING` dos arquivos de instrução. Preserva os `*.custom.md`, o `memory.sqlite`, as specs e os evals. Ao final, mostra um relatório do que mudou.
 
-Para atualizar a própria skill: `git pull` neste repositório e copie a pasta `skill/loop-engineering-init` de novo para o diretório de skills.
+Para atualizar a própria skill: `git pull` neste repositório e copie a pasta `skill/loop-engineering` de novo para o diretório de skills.
 
 ---
 

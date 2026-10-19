@@ -1,7 +1,7 @@
 # Customizações Locais do Tester & Judge para LoopBasic
 
 Adicione aqui critérios adicionais de aceite e regras de auditoria específicas deste projeto.
-Este arquivo NUNCA será sobrescrito pelo comando `/loop-engineering-init update`.
+Este arquivo NUNCA será sobrescrito pelo comando `/loop-engineering update`.
 
 Exemplos:
 - Comando específico de testes para este repositório: `pytest`

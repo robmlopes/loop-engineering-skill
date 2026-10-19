@@ -1,5 +1,5 @@
 ---
-name: loop-engineering-init
+name: loop-engineering
 description: "Inicializa ou atualiza estrutura completa de Harness & Loop Engineering em qualquer workspace (novo ou existente). Configura governança (.agents/, SOUL, MEMORY, SQLite, papéis) e ciclo (.loop/, SCHEDULE, specs, tasks, evals). Suporta análise com graft em projetos existentes e modo update/audit para sincronizar guard-rails preservando customizações locais (*.custom.md)."
 risk: low
 source: user
@@ -14,8 +14,8 @@ Esta skill transforma qualquer pasta em um workspace governado por **Harness & L
 
 ## 1. Modos de Operação
 
-- **Modo Inicialização** (`/loop-engineering-init` ou "inicialize o loop engineering"): instala a governança completa do zero.
-- **Modo Atualização / Auditoria** (`/loop-engineering-init update` ou `/loop-engineering-init audit` ou "atualize os agentes deste projeto"): audita e atualiza os arquivos core da governança com as regras e guard-rails mais recentes, preservando estritamente arquivos customizados (`*.custom.md`), dados do SQLite e histórico de loops.
+- **Modo Inicialização** (`/loop-engineering init` ou "inicialize o loop engineering"): instala a governança completa do zero.
+- **Modo Atualização / Auditoria** (`/loop-engineering update` ou `/loop-engineering audit` ou "atualize os agentes deste projeto"): audita e atualiza os arquivos core da governança com as regras e guard-rails mais recentes, preservando estritamente arquivos customizados (`*.custom.md`), dados do SQLite e histórico de loops.
 
 ---
 
@@ -63,7 +63,7 @@ ANTES de criar qualquer arquivo, procure instruções de agentes já existentes 
 1. **Backup**: antes de editar, copie cada arquivo encontrado para `<arquivo>.bak-loop` (ex.: `CLAUDE.md.bak-loop`), se ainda não existir.
 2. **Bloco gerenciado**: o conteúdo da skill é inserido entre marcadores, ao FINAL do arquivo:
    ```markdown
-   <!-- LOOP-ENGINEERING:BEGIN (gerenciado por /loop-engineering-init; não edite dentro do bloco) -->
+   <!-- LOOP-ENGINEERING:BEGIN (gerenciado por /loop-engineering; não edite dentro do bloco) -->
    ... manifesto do loop (princípios, mapa, ciclo, roteamento por role) ...
    <!-- LOOP-ENGINEERING:END -->
    ```
@@ -151,7 +151,7 @@ python3 -c "import sqlite3; conn = sqlite3.connect('.agents/memory.sqlite'); f =
 
 ## 4. Fluxo de Atualização / Auditoria (`update`)
 
-Quando acionada para atualização (`/loop-engineering-init update` ou após melhorias globais):
+Quando acionada para atualização (`/loop-engineering update` ou após melhorias globais):
 
 1. **Auditoria de Existência**:
    - Verifica presença de `AGENTS.md` e pasta `.agents/`. Se ausentes, orienta rodar a inicialização completa.
